@@ -3,7 +3,7 @@ import * as SecureStore from 'expo-secure-store';
 
 import { useUser } from '@/context/user.provider';
 import { SignInDto, UseLogin, UseMe } from './types';
-import { getUser, signInUser } from './api';
+import { getUser, loginApple, signInUser, signUpApple } from './api';
 
 export const useLogin = (): UseLogin => {
   const { setAuthenticated } = useUser();
@@ -14,6 +14,32 @@ export const useLogin = (): UseLogin => {
   };
 
   return useMutation(signInUser, {
+    onSuccess: handleSuccess,
+  });
+};
+
+export const useAppleLogin = () => {
+  const { setAuthenticated } = useUser();
+
+  const handleSuccess = async (signInDto: SignInDto) => {
+    await SecureStore.setItemAsync('accessToken', signInDto.accessToken);
+    setAuthenticated(true);
+  };
+
+  return useMutation(loginApple, {
+    onSuccess: handleSuccess,
+  });
+};
+
+export const useAppleSignUp = () => {
+  const { setAuthenticated } = useUser();
+
+  const handleSuccess = async (dto: SignInDto) => {
+    await SecureStore.setItemAsync('accessToken', dto.accessToken);
+    setAuthenticated(true);
+  };
+
+  return useMutation(signUpApple, {
     onSuccess: handleSuccess,
   });
 };

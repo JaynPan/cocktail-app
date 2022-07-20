@@ -1,7 +1,7 @@
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
-axios.defaults.baseURL = 'https://21f0-118-167-129-39.ngrok.io';
+axios.defaults.baseURL = 'https://2458-1-163-238-241.ngrok.io';
 
 axios.interceptors.request.use(
   async (config) => {

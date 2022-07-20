@@ -1,17 +1,64 @@
 import React, { FC, useState } from 'react';
-import { Text } from 'react-native';
 import { Stack, Center, Input, Icon, Button } from 'native-base';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useLogin } from '@/hook/auth';
+import * as AppleAuthentication from 'expo-apple-authentication';
+
+import { useAppleLogin, useAppleSignUp, useLogin } from '@/hook/auth';
+import { HandleAppleSignUpArgs } from './types';
 
 export const Login: FC = () => {
   const [show, setShow] = React.useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { mutate } = useLogin();
+  const { mutate: emailPasswordLoginMutate } = useLogin();
+  const { mutate: appleSignUpMutate } = useAppleSignUp();
+  const { mutate: appleLoginMutate } = useAppleLogin();
 
   const handleLogin = () => {
-    mutate({ email, password });
+    emailPasswordLoginMutate({ email, password });
+  };
+
+  const handleAppleSignUp = async (payload: HandleAppleSignUpArgs) => {
+    appleSignUpMutate(payload);
+  };
+
+  const handleAppleLogin = async (identityToken: string) => {
+    appleLoginMutate({ identityToken });
+  };
+
+  const pressAppleSignButton = async () => {
+    try {
+      const { identityToken, fullName, email } = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      });
+
+      if (!identityToken) return;
+
+      // const cachedName: string = await Cache.getAppleLoginName(credential.user);
+
+      // The email and fullName will only be populated ONCE. The first time they press the button, this applies even if they change their device or update the app.
+      const isUserInfoShown = !!fullName?.givenName && !!email;
+
+      if (!isUserInfoShown) {
+        await handleAppleLogin(identityToken);
+        return;
+      }
+
+      await handleAppleSignUp({
+        name: fullName?.givenName || '',
+        email: email || '',
+        identityToken,
+      });
+    } catch (err: any) {
+      if (err.code === 'ERR_CANCELED') {
+        // handle that the user canceled the sign-in flow
+      } else {
+        // handle other errors
+      }
+    }
   };
 
   return (
@@ -47,6 +94,13 @@ export const Login: FC = () => {
       <Button width="75%" colorScheme="primary" onPress={handleLogin}>
         送出
       </Button>
+      <AppleAuthentication.AppleAuthenticationButton
+        buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
+        buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
+        cornerRadius={5}
+        style={{ width: 200, height: 44 }}
+        onPress={pressAppleSignButton}
+      />
     </Stack>
   );
 };
