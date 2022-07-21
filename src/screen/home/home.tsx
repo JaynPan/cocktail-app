@@ -19,7 +19,7 @@ export const Home: FC = () => {
 
   return (
     <Container flex="1" justifyContent="center" alignItems="center">
-      <Text>{userInfo?.email}</Text>
+      <Text>{userInfo?.name}</Text>
       <Button colorScheme="primary" width="50%" onPress={handleLogout}>
         登出
       </Button>

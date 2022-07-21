@@ -5,7 +5,7 @@ export enum RoleEnum {
   USER = 'user',
 }
 
-export type UserDto = { id: number; username: string; email: string; role: RoleEnum };
+export type UserDto = { id: number; name: string; email: string; role: RoleEnum };
 export type Token = { accessToken: string };
 export type UseWhoAmI = { useWhoAmI: UseQueryResult<UserDto>; isAuthenticated: boolean };
 
