@@ -6,15 +6,16 @@ import * as WebBrowser from 'expo-web-browser';
 
 import { useLoginApple, useLoginGoogle, useSignUpApple } from '@/hook/auth';
 import { GoogleLoginButton } from '@/components/googleLoinButton/googleLoginButton';
+import { LoadingSpinner } from '@/components/loadingSpinner';
 
 WebBrowser.maybeCompleteAuthSession();
 
 export const Login: FC = () => {
-  const { mutate: appleSignUpMutate } = useSignUpApple();
-  const { mutate: appleLoginMutate, isLoading: apple } = useLoginApple();
+  const { mutate: appleSignUpMutate, isLoading: appleSignUpProcessing } = useSignUpApple();
+  const { mutate: appleLoginMutate, isLoading: appleLoginProcessing } = useLoginApple();
   const { mutate: googleLoginMutate, isLoading: googleLoginProcessing } = useLoginGoogle();
 
-  const [request, response, promptAsync] = Google.useAuthRequest({
+  const [, response, promptAsync] = Google.useAuthRequest({
     expoClientId: '634100191621-gms7n9f0ag1u8m9hqjpo5nniamn0srrr.apps.googleusercontent.com',
   });
 
@@ -50,7 +51,6 @@ export const Login: FC = () => {
     }
   };
 
-  // fetch user google info
   useEffect(() => {
     if (response?.type === 'success') {
       const { authentication } = response;
@@ -63,6 +63,8 @@ export const Login: FC = () => {
 
   return (
     <Stack space={4} w="100%" alignItems="center" justifyContent="center" flex="1" paddingX="8">
+      {(appleSignUpProcessing || appleLoginProcessing || googleLoginProcessing) && <LoadingSpinner />}
+
       <AppleAuthentication.AppleAuthenticationButton
         buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
         buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
@@ -70,11 +72,7 @@ export const Login: FC = () => {
         style={{ width: '100%', height: 48 }}
         onPress={pressAppleSignButton}
       />
-      <GoogleLoginButton
-        disabled={googleLoginProcessing}
-        isLoading={googleLoginProcessing}
-        onPress={() => promptAsync()}
-      />
+      <GoogleLoginButton disabled={googleLoginProcessing} onPress={() => promptAsync()} />
     </Stack>
   );
 };
