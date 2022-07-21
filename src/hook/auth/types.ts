@@ -7,7 +7,7 @@ export enum RoleEnum {
 
 export type UserDto = { id: number; username: string; email: string; role: RoleEnum };
 export type Token = { accessToken: string };
-export type UseMe = UseQueryResult<UserDto>;
+export type UseWhoAmI = { useWhoAmI: UseQueryResult<UserDto>; isAuthenticated: boolean };
 
 export type SignInArgs = { email: string; password: string };
 export type SignInUserFunc = MutationFunction<SignInDto, SignInArgs>;

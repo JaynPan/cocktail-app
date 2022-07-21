@@ -4,12 +4,13 @@ import * as SplashScreen from 'expo-splash-screen';
 
 import PrivateStack from '@/navigation/privateStack';
 import PublicStack from '@/navigation/publicStack';
-import { useMe } from '@/hook/auth';
-import { useUser } from '@/context/user.provider';
+import { useWhoAmI } from '@/hook/auth';
 
 export const Router: FC = () => {
-  const { isLoading } = useMe();
-  const { isAuthenticated } = useUser();
+  const {
+    useWhoAmI: { isLoading },
+    isAuthenticated,
+  } = useWhoAmI();
 
   useEffect(() => {
     SplashScreen.preventAutoHideAsync();

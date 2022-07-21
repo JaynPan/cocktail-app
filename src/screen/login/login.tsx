@@ -1,9 +1,9 @@
 import React, { FC, useState } from 'react';
-import { Stack, Center, Input, Icon, Button } from 'native-base';
+import { Stack, Input, Icon, Button } from 'native-base';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as AppleAuthentication from 'expo-apple-authentication';
 
-import { useAppleLogin, useAppleSignUp, useLogin } from '@/hook/auth';
+import { useLoginApple, useSignUpApple, useLogin } from '@/hook/auth';
 import { HandleAppleSignUpArgs } from './types';
 
 export const Login: FC = () => {
@@ -11,8 +11,8 @@ export const Login: FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { mutate: emailPasswordLoginMutate } = useLogin();
-  const { mutate: appleSignUpMutate } = useAppleSignUp();
-  const { mutate: appleLoginMutate } = useAppleLogin();
+  const { mutate: appleSignUpMutate } = useSignUpApple();
+  const { mutate: appleLoginMutate } = useLoginApple();
 
   const handleLogin = () => {
     emailPasswordLoginMutate({ email, password });
@@ -37,21 +37,18 @@ export const Login: FC = () => {
 
       if (!identityToken) return;
 
-      // const cachedName: string = await Cache.getAppleLoginName(credential.user);
-
       // The email and fullName will only be populated ONCE. The first time they press the button, this applies even if they change their device or update the app.
       const isUserInfoShown = !!fullName?.givenName && !!email;
 
       if (!isUserInfoShown) {
         await handleAppleLogin(identityToken);
-        return;
+      } else {
+        await handleAppleSignUp({
+          name: fullName?.givenName || '',
+          email: email || '',
+          identityToken,
+        });
       }
-
-      await handleAppleSignUp({
-        name: fullName?.givenName || '',
-        email: email || '',
-        identityToken,
-      });
     } catch (err: any) {
       if (err.code === 'ERR_CANCELED') {
         // handle that the user canceled the sign-in flow
@@ -62,10 +59,10 @@ export const Login: FC = () => {
   };
 
   return (
-    <Stack space={4} w="100%" alignItems="center" justifyContent="center" flex="1">
+    <Stack space={4} w="100%" alignItems="center" justifyContent="center" flex="1" paddingX="8">
       <Input
         w={{
-          base: '75%',
+          base: '100%',
           md: '25%',
         }}
         InputLeftElement={<Icon as={<MaterialIcons name="email" />} size={5} ml="2" color="muted.400" />}
@@ -74,7 +71,7 @@ export const Login: FC = () => {
       />
       <Input
         w={{
-          base: '75%',
+          base: '100%',
           md: '25%',
         }}
         type={show ? 'text' : 'password'}
@@ -91,14 +88,14 @@ export const Login: FC = () => {
         }
         placeholder="Password"
       />
-      <Button width="75%" colorScheme="primary" onPress={handleLogin}>
+      <Button width="100%" colorScheme="primary" onPress={handleLogin}>
         送出
       </Button>
       <AppleAuthentication.AppleAuthenticationButton
         buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
         buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
         cornerRadius={5}
-        style={{ width: 200, height: 44 }}
+        style={{ width: '100%', height: 50 }}
         onPress={pressAppleSignButton}
       />
     </Stack>

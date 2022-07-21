@@ -8,13 +8,13 @@ export const getUser = async (): Promise<UserDto> => {
     url: '/auth/whoami',
   });
 
-  return res.data.data;
+  return res.data;
 };
 
 export const signInUser: SignInUserFunc = async (payload) => {
   const res = await axios({
     method: 'POST',
-    url: '/auth/signin',
+    url: '/auth/login',
     data: payload,
   });
 
@@ -24,7 +24,7 @@ export const signInUser: SignInUserFunc = async (payload) => {
 export const loginApple: LoginAppleFunc = async (payload) => {
   const res = await axios({
     method: 'POST',
-    url: '/auth/signin/apple',
+    url: '/auth/login/apple',
     data: payload,
   });
 
