@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { UserDto, SignInUserFunc, SignUpAppleFunc, LoginAppleFunc } from './types';
+import { UserDto, SignInUserFunc, SignUpAppleFunc, LoginAppleFunc, LoginGoogleFunc } from './types';
 
 export const getUser = async (): Promise<UserDto> => {
   const res = await axios({
@@ -35,6 +35,16 @@ export const signUpApple: SignUpAppleFunc = async (payload) => {
   const res = await axios({
     method: 'POST',
     url: '/auth/signup/apple',
+    data: payload,
+  });
+
+  return res.data;
+};
+
+export const loginGoogle: LoginGoogleFunc = async (payload) => {
+  const res = await axios({
+    method: 'POST',
+    url: '/auth/login/google',
     data: payload,
   });
 

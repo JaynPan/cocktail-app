@@ -1,12 +1,21 @@
-import React, { FC } from 'react';
-import { Stack } from 'native-base';
+import React, { FC, useEffect } from 'react';
+import { Button, Stack } from 'native-base';
 import * as AppleAuthentication from 'expo-apple-authentication';
+import * as Google from 'expo-auth-session/providers/google';
+import * as WebBrowser from 'expo-web-browser';
 
-import { useLoginApple, useSignUpApple } from '@/hook/auth';
+import { useLoginApple, useLoginGoogle, useSignUpApple } from '@/hook/auth';
+
+WebBrowser.maybeCompleteAuthSession();
 
 export const Login: FC = () => {
   const { mutate: appleSignUpMutate } = useSignUpApple();
   const { mutate: appleLoginMutate } = useLoginApple();
+  const { mutate: googleLoginMutate } = useLoginGoogle();
+
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    expoClientId: '634100191621-gms7n9f0ag1u8m9hqjpo5nniamn0srrr.apps.googleusercontent.com',
+  });
 
   const pressAppleSignButton = async () => {
     try {
@@ -40,6 +49,17 @@ export const Login: FC = () => {
     }
   };
 
+  // fetch user google info
+  useEffect(() => {
+    if (response?.type === 'success') {
+      const { authentication } = response;
+
+      if (authentication?.accessToken) {
+        googleLoginMutate({ accessToken: authentication?.accessToken });
+      }
+    }
+  }, [response]);
+
   return (
     <Stack space={4} w="100%" alignItems="center" justifyContent="center" flex="1" paddingX="8">
       <AppleAuthentication.AppleAuthenticationButton
@@ -49,6 +69,7 @@ export const Login: FC = () => {
         style={{ width: '100%', height: 50 }}
         onPress={pressAppleSignButton}
       />
+      <Button onPress={() => promptAsync()}>Google login</Button>
     </Stack>
   );
 };

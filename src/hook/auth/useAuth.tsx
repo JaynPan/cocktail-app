@@ -2,8 +2,8 @@ import { useQuery, useMutation, useQueryClient } from 'react-query';
 import * as SecureStore from 'expo-secure-store';
 
 import { useMemo } from 'react';
-import { SignInDto, UseLogin, UseLoginApple, UseWhoAmI, UseSignUpApple } from './types';
-import { getUser, loginApple, signInUser, signUpApple } from './api';
+import { SignInDto, UseLogin, UseLoginApple, UseWhoAmI, UseSignUpApple, UseLoginGoogle } from './types';
+import { getUser, loginApple, loginGoogle, signInUser, signUpApple } from './api';
 
 export const useLogin = (): UseLogin => {
   const queryClient = useQueryClient();
@@ -64,4 +64,19 @@ export const useWhoAmI = (): UseWhoAmI => {
     useWhoAmI,
     isAuthenticated,
   };
+};
+
+export const useLoginGoogle = (): UseLoginGoogle => {
+  const queryClient = useQueryClient();
+
+  const handleSuccess = async (signInDto: SignInDto) => {
+    const { accessToken, ...userInfo } = signInDto;
+
+    await SecureStore.setItemAsync('accessToken', accessToken);
+    queryClient.setQueryData(['user'], userInfo);
+  };
+
+  return useMutation(loginGoogle, {
+    onSuccess: handleSuccess,
+  });
 };

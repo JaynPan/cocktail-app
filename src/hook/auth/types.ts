@@ -23,3 +23,8 @@ export type SignUpAppleArgs = { identityToken: string; name: string };
 export type SignUpAppleFunc = MutationFunction<SignUpAppleDto, SignUpAppleArgs>;
 export type SignUpAppleDto = Token & UserDto;
 export type UseSignUpApple = UseMutationResult<SignUpAppleDto, any, SignUpAppleArgs>;
+
+export type LoginGoogleArgs = { accessToken: string };
+export type LoginGoogleFunc = MutationFunction<LoginGoogleDto, LoginGoogleArgs>;
+export type LoginGoogleDto = Token & UserDto;
+export type UseLoginGoogle = UseMutationResult<LoginGoogleDto, any, LoginGoogleArgs>;

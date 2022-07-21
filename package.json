@@ -27,7 +27,9 @@
     "react-native-screens": "^3.13.1",
     "react-native-svg": "12.3.0",
     "react-native-web": "0.17.7",
-    "expo-apple-authentication": "~4.2.1"
+    "expo-apple-authentication": "~4.2.1",
+    "expo-auth-session": "~3.6.1",
+    "expo-random": "~12.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
