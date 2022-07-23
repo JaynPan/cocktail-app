@@ -1,6 +1,13 @@
 import React, { FC } from 'react';
-import { Text } from 'react-native';
+import { View } from 'react-native';
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+
+import { styles } from './styles';
 
 export const Map: FC = () => {
-  return <Text>map</Text>;
+  return (
+    <View style={styles.container}>
+      <MapView style={styles.map} provider={PROVIDER_GOOGLE} showsUserLocation />
+    </View>
+  );
 };
