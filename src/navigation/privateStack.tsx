@@ -1,13 +1,13 @@
 import React, { FC } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import { Home } from '@/screen/home';
+import { MainTab } from '@/navigation/mainTab';
 
 const Stack = createStackNavigator();
 
 const PrivateStack: FC = () => (
   <Stack.Navigator>
-    <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
+    <Stack.Screen name="MainTab" component={MainTab} options={{ headerShown: false }} />
   </Stack.Navigator>
 );
 
