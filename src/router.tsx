@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useCallback } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import * as SplashScreen from 'expo-splash-screen';
 
@@ -8,17 +8,22 @@ import { useWhoAmI } from '@/hook/auth';
 
 export const Router: FC = () => {
   const {
-    useWhoAmI: { isLoading },
+    useWhoAmI: { refetch },
     isAuthenticated,
   } = useWhoAmI();
 
-  useEffect(() => {
-    SplashScreen.preventAutoHideAsync();
+  const displayScreenAfterFetchingUserRequest = useCallback(async () => {
+    try {
+      await SplashScreen.preventAutoHideAsync();
+      await refetch();
+    } finally {
+      await SplashScreen.hideAsync();
+    }
   }, []);
 
   useEffect(() => {
-    if (!isLoading) SplashScreen.hideAsync();
-  }, [isLoading]);
+    displayScreenAfterFetchingUserRequest();
+  }, []);
 
   return <NavigationContainer>{isAuthenticated ? <PrivateStack /> : <PublicStack />}</NavigationContainer>;
 };
